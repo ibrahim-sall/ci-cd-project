@@ -2,13 +2,17 @@
   "name": "ci-cd-project",
   "version": "1.0.0",
   "description": "CLI for vehicle-server",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@caporal/core": "^2.0.7"
+    "@caporal/core": "^2.0.7",
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "typescript-eslint": "^8.15.0"
   }
 }

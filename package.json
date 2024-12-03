@@ -4,7 +4,6 @@
   "description": "CLI for vehicle-server",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf ./dist && tsc",
     "start": "npm run build && node dist/index.js",
     "start-db": "docker container run -d -name vehicle-database -e POSTGRES_USER=vehicle -e POSTGRES_PASSWORD=vehicle -e POSTGRES_DB=vehicle -p 5432:5432 postgis/postgis:16-3.4-alpine",
@@ -18,5 +17,11 @@
     "@types/node": "^22.10.1",
     "@types/pg": "^8.11.10",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@types/eslint__js": "^8.42.3",
+    "eslint": "^9.16.0",
+    "typescript-eslint": "^8.17.0"
   }
 }

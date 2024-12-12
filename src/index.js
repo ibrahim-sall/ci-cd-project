@@ -49,6 +49,7 @@ program
     };
     logger.info(url)
     logger.info(data.shortcode)
+    //Je sais pas comment on fait ducoup pour et lancer le docker et envoyer la requête
   })
 
 program.run();

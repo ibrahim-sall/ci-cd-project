@@ -1,9 +1,15 @@
 const { program } = require("@caporal/core")
 
-// Simplest program ever: this program does only one thing
-program.action(({ logger }) => {
-  logger.info("Hello, world!")
-})
+program
+  .command("list-vehicle", "Add a vehicle to the database")
+  .option("-p, --port <port>", "Port to use", {
+    default: "3000",
+  })
+  .action(({ logger, options }) => {
+    const url = 'http://localhost:'+options.port+'/create-vehicle';
+    logger.info(url)
+    //Faire un fetch
+  })
 
 // always run the program at the end
 program.run()

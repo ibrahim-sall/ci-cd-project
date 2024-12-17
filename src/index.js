@@ -40,7 +40,7 @@ program
       logger.error("Error: Missing required options.");
       return;
     }
-    const url = 'http://localhost:'+options.port+'/create-vehicle';
+    const url = 'http://localhost:'+options.port+'/vehicles';
     const data = {
       shortcode: options.shortcode,
       battery: options.battery,
@@ -49,7 +49,25 @@ program
     };
     logger.info(url)
     logger.info(data.shortcode)
-    //Faire un fetch
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(result => {
+        logger.info("Vehicle added successfully:", result);
+      })
+      .catch(error => {
+        logger.error("Error adding vehicle:", error);
+      });
   })
 
 program.run();

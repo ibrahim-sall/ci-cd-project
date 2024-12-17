@@ -1,20 +1,40 @@
-const { program } = require("@caporal/core")
+const { program } = require("@caporal/core");
 
 program
-  .command("add", "Add a vehicle to the database")
-  .option("--id <id>","ID of the vehicle you want to remove")
+  .command("remove", "Remove a vehicle from the database by id")
+  .option("--id <id>", "ID of the vehicle you want to remove")
   .option("-p, --port <port>", "Port to use", {
     default: "3000",
   })
-  .action(({ logger, options }) => {
-    const url = 'http://localhost:'+options.port+'/create-vehicle';
-    const data = {
-      id : options.id
-    };
-    logger.info(url)
-    logger.info(data.shortcode)
-    //Faire un fetch
-  })
+  .action(async ({ logger, options }) => {
+    const fetch = (await import("node-fetch")).default;
 
-// always run the program at the end
-program.run()
+    if (!options.id) {
+      logger.error("Vehicle ID is required");
+      return;
+    }
+
+    const url = `http://localhost:${options.port}/vehicles/${options.id}`;
+    logger.info(url);
+
+    fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(result => {
+      logger.info("Vehicle removed successfully:", result);
+    })
+    .catch(error => {
+      logger.error("Error removing vehicle:", error);
+    });
+  });
+
+program.run();

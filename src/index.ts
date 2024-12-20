@@ -5,7 +5,6 @@ program
   .option("--id <id>", "ID of the vehicle you want to remove", { validator: program.NUMBER})
   .option("-p, --port <port>", "Port to use", { validator: program.NUMBER})
   .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
-    //const { default: fetch } = await import('node-fetch'); 
 
     if (!options.id) {
       logger.error("Vehicle ID is required");

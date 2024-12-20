@@ -1,11 +1,9 @@
-const { program } = require("@caporal/core")
+import {program, Logger, ParsedOptions } from '@caporal/core';
 
 program
   .command("list-vehicle", "List all vehicles")
-  .option("-p, --port <port>", "Port to use", {
-    default: "3000",
-  })
-  .action(({ logger, options }) => {
+  .option("-p, --port <port>", "Port to use",{ validator: program.NUMBER})
+  .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
     const url = 'http://localhost:'+options.port+'/vehicles';
     logger.info(url);
     fetch(url, {

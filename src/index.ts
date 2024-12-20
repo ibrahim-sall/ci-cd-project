@@ -1,16 +1,14 @@
-import {program, Logger} from '@caporal/core';
+import {program, Logger, ParsedOptions } from '@caporal/core';
 
 program
   .command("add", "Add a vehicle to the database")
-  .option("--shortcode <shortcode>", "4 character long code to name the vehicle")
+  .option("--shortcode <shortcode>", "4 character long code to name the vehicle",{ validator: program.STRING })
   .option("--battery <battery>", "Level of battery of the vehicle", { validator: program.NUMBER })
   .option("--longitude <longitude>", "Longitude of the coordinate of the vehicle", { validator: program.NUMBER })
   .option("--latitude <latitude>", "Latitude of the coordinate of the vehicle", { validator: program.NUMBER })
-  .option("-p, --port <port>", "Port to use", {
-    default: "3000",
-  })
-  .action(({ logger, options }:{ logger: Logger; options: Record<string, any> }) => {
-    if (!options.shortcode || !options.battery || !options.longitude || !options.latitude) {
+  .option("-p, --port <port>", "Port to use", { validator: program.NUMBER})
+  .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
+    if (!options.shortcode || !options.battery || !options.longitude || !options.latitude || !options.port) {
       logger.error("Error: Missing required options.");
       return;
     }

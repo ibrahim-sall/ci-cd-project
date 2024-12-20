@@ -32,5 +32,8 @@
   "dependencies": {
     "express": "^5.0.1",
     "pg": "^8.13.1"
+  },
+  "bin": {
+    "vehicle-server": "dist/src/index.js"
   }
 }

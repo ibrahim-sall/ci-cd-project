@@ -1,29 +1,3 @@
-var http = require('http');
-var https = require('https');
-
-var retreiveDatas = function(url){
-    return new Promise((resolve, reject) => {
-        var proto = https;
-        if (url.indexOf("http://") == 0)
-            proto = http;
-
-        var request = proto.get(url, function(response){
-            response.setEncoding('utf8');
-
-            var body = '';
-            response.on('data', function(d){
-                body += d;
-            });
-
-            response.on('end', function(){
-                var parsed = JSON.parse(body);
-                resolve(parsed);
-            });
-        });
-    })
-}
-
-
 const { program } = require("@caporal/core");
 
 program

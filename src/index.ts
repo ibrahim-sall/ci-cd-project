@@ -1,13 +1,11 @@
-const { program } = require("@caporal/core");
+import {program, Logger, ParsedOptions } from '@caporal/core';
 
 program
   .command("remove", "Remove a vehicle from the database by id")
-  .option("--id <id>", "ID of the vehicle you want to remove")
-  .option("-p, --port <port>", "Port to use", {
-    default: "3000",
-  })
-  .action(async ({ logger, options }) => {
-    const fetch = (await import("node-fetch")).default;
+  .option("--id <id>", "ID of the vehicle you want to remove", { validator: program.NUMBER})
+  .option("-p, --port <port>", "Port to use", { validator: program.NUMBER})
+  .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
+    //const { default: fetch } = await import('node-fetch'); 
 
     if (!options.id) {
       logger.error("Vehicle ID is required");

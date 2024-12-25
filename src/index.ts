@@ -1,25 +1,27 @@
-import {program, Logger, ParsedOptions } from '@caporal/core';
+import { program, Logger, ParsedOptions } from '@caporal/core';
+const fetch = require('node-fetch');
 
 program
   .command("list-vehicle", "List all vehicles")
-  .option("-p, --port <port>", "Port to use",{ validator: program.NUMBER})
-  .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
-    const url = 'http://localhost:'+options.port+'/vehicles';
+  .option("-p, --port <port>", "Port to use", { validator: program.NUMBER })
+  .action(async ({ logger, options }: { logger: Logger; options: ParsedOptions }) => {
+    const url = `http://localhost:${options.port}/vehicles`;
     logger.info(url);
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    })
-      .then(response => response.json())
-      .then(data => {
-        logger.info('Vehicles:', data);
-      })
-      .catch(error => {
-        logger.error('Error:', error);
-      });
+      const vehicles = await response.json();
+      if (vehicles.length === 0) {
+        logger.info('No vehicles found.');
+      } else {
+        logger.info('Vehicles:', vehicles);
+      }
+    } catch (error) {
+      logger.error('Error:', error);
+    }
   });
 
-
-program.run()
+program.run();

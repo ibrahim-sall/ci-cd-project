@@ -2,7 +2,7 @@ import { connectDb, dbConfigFromEnv } from "./database";
 import { setupApp } from "./app";
 
 async function main() {
-  let port = 8080;
+  let port = 5432;
 
   if (process.env.PORT) {
     port = parseInt(process.env.PORT, 10);

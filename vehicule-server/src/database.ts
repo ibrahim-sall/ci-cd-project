@@ -26,7 +26,7 @@ interface DBConfig {
 
 export function dbConfigFromEnv(): DBConfig {
   return {
-    host: process.env.DB_HOST ?? 'localhost',
+    host: process.env.DB_HOST ?? 'db',
     port: parseInt(process.env.DB_PORT ?? '5432'),
     database: process.env.DB_DATABASE ?? 'vehicle',
     user: process.env.DB_USER ?? 'vehicle',

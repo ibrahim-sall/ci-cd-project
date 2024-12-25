@@ -18,7 +18,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgres://vehicle:vehicle@db:5432/vehicle
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: vehicle
+      DB_USER: vehicle
+      DB_PASSWORD: vehicle
     networks:
       - vehicle-network
     depends_on:

@@ -1,14 +1,13 @@
 FROM node:20-alpine3.19 AS build
-COPY . /app
 WORKDIR /app
-RUN npm install && \
-  npm run build
+COPY package*.json ./
+
+RUN npm install
+COPY . .
+RUN npm run build
 
 FROM node:20-alpine3.19 AS runtime
-RUN mkdir -p /app
 WORKDIR /app
-COPY ./package.json ./package-lock.json ./
+COPY --from=build /app /app
 RUN npm install --production
-COPY --from=build /app/dist /app/dist
-
 ENTRYPOINT ["node", "/app/dist/index.js"]

@@ -31,10 +31,16 @@ services:
 
   cli:
     build: .
+    tty: true
+    environment:
+    - API_HOST=app
     ports:
       - "8080:8080"
+    stdin_open: true
     networks:
       - vehicle-network
+    depends_on:
+      - app
 
 networks:
   vehicle-network:

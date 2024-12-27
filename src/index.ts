@@ -1,10 +1,13 @@
 import { program, Logger, ParsedOptions } from '@caporal/core';
+const apiHost = process.env.API_HOST || 'localhost';
+const baseUrl = `http://${apiHost}:`;
 
 program
   .command("list-vehicle", "List all vehicles")
   .option("-p, --port <port>", "Port to use", { validator: program.NUMBER })
   .action(async ({ logger, options }: { logger: Logger; options: ParsedOptions }) => {
-    const url = `http://localhost:${options.port}/vehicles`;
+    const apiPort = options.port || '3000';
+    const url = `${baseUrl}${apiPort}/vehicles`;
     logger.info(url);
 
     try {

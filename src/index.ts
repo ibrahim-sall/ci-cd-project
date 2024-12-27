@@ -1,5 +1,4 @@
 import { program, Logger, ParsedOptions } from '@caporal/core';
-const fetch = require('node-fetch');
 
 program
   .command("list-vehicle", "List all vehicles")

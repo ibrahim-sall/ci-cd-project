@@ -16,13 +16,14 @@ services:
   app:
     build: ./vehicule-server
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       DB_HOST: db
       DB_PORT: 5432
       DB_DATABASE: vehicle
       DB_USER: vehicle
       DB_PASSWORD: vehicle
+      PORT: 3001
     networks:
       - vehicle-network
     depends_on:

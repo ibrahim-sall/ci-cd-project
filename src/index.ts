@@ -1,4 +1,6 @@
-import {program, Logger, ParsedOptions } from '@caporal/core';
+import { program, Logger, ParsedOptions } from '@caporal/core';
+const apiHost = process.env.API_HOST || 'localhost';
+const baseUrl = `http://${apiHost}:`;
 
 program
   .command("add", "Add a vehicle to the database")
@@ -7,63 +9,61 @@ program
   .option("--longitude <longitude>", "Longitude of the coordinate of the vehicle", { validator: program.NUMBER })
   .option("--latitude <latitude>", "Latitude of the coordinate of the vehicle", { validator: program.NUMBER })
   .option("-p, --port <port>", "Port to use", { validator: program.NUMBER})
-  .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
+  .action(async ({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
     if (!options.shortcode || !options.battery || !options.longitude || !options.latitude || !options.port) {
       logger.error("Error: Missing required options.");
       return;
     }
-    const url = 'http://localhost:'+options.port+'/vehicles';
+    const url = `${baseUrl}${options.port}/vehicles`;
     const data = {
       shortcode: options.shortcode,
       battery: options.battery,
       longitude: options.longitude,
       latitude: options.latitude
     };
-    logger.info(url)
-    logger.info(data.shortcode)
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(result => {
-        logger.info("Vehicle added successfully:", result);
-      })
-      .catch(error => {
-        logger.error("Error adding vehicle:", error);
+    logger.info(url);
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      logger.info('Vehicle added successfully:', result);
+    } catch (error) {
+      logger.error('Error:', error);
+    }
   })
 
-  
   .command("list-vehicle", "List all vehicles")
-  .option("-p, --port <port>", "Port to use",{ validator: program.NUMBER})
-  .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
-    const url = 'http://localhost:'+options.port+'/vehicles';
+  .option("-p, --port <port>", "Port to use", { validator: program.NUMBER })
+  .action(async ({ logger, options }: { logger: Logger; options: ParsedOptions }) => {
+    const apiPort = options.port;
+    const url = `${baseUrl}${apiPort}/vehicles`;
     logger.info(url);
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    })
-      .then(response => response.json())
-      .then(data => {
-        logger.info('Vehicles:', data);
-      })
-      .catch(error => {
-        logger.error('Error:', error);
-      });
+      const vehicles = await response.json();
+      if (vehicles.vehicles.length === 0) {
+        logger.info('No vehicles found.');
+      } else {
+        logger.info('Vehicles:', vehicles);
+      }
+    } catch (error) {
+      logger.error('Error:', error);
+    }
   });
 
-
-program.run()
-
-  
+program.run();

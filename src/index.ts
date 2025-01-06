@@ -69,37 +69,43 @@ program
   .command("remove", "Remove a vehicle from the database by id")
   .option("--id <id>", "ID of the vehicle you want to remove", { validator: program.NUMBER})
   .option("-p, --port <port>", "Port to use", { validator: program.NUMBER})
-  .action(({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
-
-    if (!options.id) {
-      logger.error("Vehicle ID is required");
+  .action(async({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
+    if (!options.id || !options.port) {
+      logger.error("Error: Missing required options.");
       return;
     }
 
-    const url = `http://localhost:${options.port}/vehicles/${options.id}`;
+    const url = `${baseUrl}${options.port}/vehicles/${options.id}`;
     logger.info(url);
 
-    fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => {
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.status === 404) {
         throw new Error('Vehicle not found');
       }
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return response.text().then(text => text ? JSON.parse(text) : {});
-    })
-    .then(result => {
-      logger.info("Vehicle removed successfully:", result);
-    })
-    .catch(error => {
-      logger.error("Error removing vehicle:", error.message);
-    });
+
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        logger.info("Véhicule supprimé avec succès");
+        return;
+      }
+
+      const result = await response.json();
+      logger.info("Véhicule supprimé avec succès:", result);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        logger.info("Véhicule supprimé avec succès");
+      } else {
+        logger.error("Erreur lors de la suppression du véhicule:", error);
+      }
+    }
   });
 
 program.run();

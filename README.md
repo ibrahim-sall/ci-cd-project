@@ -36,5 +36,5 @@ This simple CLI tool allows you to interact with a server connected to a PostGIS
 ```
 - Delete a vehicle
 ```bash
-   docker-compose run cli remove --id aaaa --port 3001
+   docker-compose run cli remove --id 1 --port 3001
 ```

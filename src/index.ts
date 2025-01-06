@@ -64,6 +64,48 @@ program
     } catch (error) {
       logger.error('Error:', error);
     }
+  })
+  
+  .command("remove", "Remove a vehicle from the database by id")
+  .option("--id <id>", "ID of the vehicle you want to remove", { validator: program.NUMBER})
+  .option("-p, --port <port>", "Port to use", { validator: program.NUMBER})
+  .action(async({ logger, options }:{ logger: Logger; options: ParsedOptions }) => {
+    if (!options.id || !options.port) {
+      logger.error("Error: Missing required options.");
+      return;
+    }
+
+    const url = `${baseUrl}${options.port}/vehicles/${options.id}`;
+    logger.info(url);
+
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.status === 404) {
+        throw new Error('Vehicle not found');
+      }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        logger.info("Véhicule supprimé avec succès");
+        return;
+      }
+
+      const result = await response.json();
+      logger.info("Véhicule supprimé avec succès:", result);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        logger.info("Véhicule supprimé avec succès");
+      } else {
+        logger.error("Erreur lors de la suppression du véhicule:", error);
+      }
+    }
   });
 
 program.run();

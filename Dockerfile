@@ -1,15 +1,13 @@
-FROM node:20-alpine3.19 as vehicule-server
-COPY . /app
+FROM node:20-alpine3.19 AS build
 WORKDIR /app
-RUN npm install && \
-    npm run build
-COPY ./package.json ./package-lock.json .
-EXPOSE 3000
-ENTRYPOINT ["node", "vehicle-server/index.js"]
+COPY package*.json ./
 
-FROM node:20-alpine3.19 as client-server
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine3.19 AS runtime
 WORKDIR /app
-COPY . /app
-RUN npm install && \
-    npm run build
-ENTRYPOINT ["caporal", "src/index.js"]
+COPY --from=build /app /app
+RUN npm install
+ENTRYPOINT ["node", "/app/dist/index.js"]
